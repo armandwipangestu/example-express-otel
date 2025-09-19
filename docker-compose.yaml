@@ -1,0 +1,80 @@
+services:
+    otel-collector:
+        image: otel/opentelemetry-collector-contrib:0.135.0
+        command: ["--config=/etc/otel-collector-config.yaml"]
+        volumes:
+            - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+        ports:
+            - "4317:4317" # OTLP gRPC receiver
+            - "4318:4318" # OTLP HTTP receiver
+
+    tempo:
+        image: grafana/tempo:main-eb21336-amd64
+        ports:
+            - "3200:3200" # Tempo HTTP port
+            - "4320:4320" # Tempo gRPC port
+        command: ["-config.file=/etc/tempo-config.yaml"]
+        volumes:
+            - ./tempo-config.yaml:/etc/tempo-config.yaml
+            - /c/docker/projects/example-express-otel/tempo/data:/tmp/tempo
+
+    grafana:
+        image: grafana/grafana:12.1
+        environment:
+            - GF_DATABASE_TYPE=postgres
+            - GF_DATABASE_HOST=postgres:5432
+            - GF_DATABASE_NAME=grafana
+            - GF_DATABASE_USER=postgres
+            - GF_DATABASE_PASSWORD=password
+        ports:
+            - "3001:3000" # Grafana HTTP port
+        depends_on:
+            postgres:
+                condition: service_healthy
+        entrypoint: >
+            sh -c "
+              until nc -z postgres 5432; do
+                echo 'Waiting for postgres...';
+                sleep 2;
+              done;
+              exec /run.sh
+            "
+
+    postgres:
+        image: postgres:17-bookworm
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: example_express_otel
+        ports:
+            - "5432:5432"
+        volumes:
+            - /c/docker/projects/example-express-otel/postgres:/var/lib/postgresql/data
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./init-grafana.sql:/docker-entrypoint-initdb.d/init-grafana.sql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=development
+            - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318/v1/traces
+            - DB_HOST=postgres
+            - DB_USER=postgres
+            - DB_PASSWORD=password
+            - DB_NAME=example_express_otel
+        volumes:
+            - ./:/usr/src/app
+            - /usr/src/app/node_modules
+        depends_on:
+            - otel-collector
+            - postgres

@@ -1,0 +1,43 @@
+{
+    "name": "example-express-otel",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/armandwipangestu/example-express-otel.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/armandwipangestu/example-express-otel/issues"
+    },
+    "homepage": "https://github.com/armandwipangestu/example-express-otel#readme",
+    "description": "",
+    "dependencies": {
+        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/auto-instrumentations-node": "^0.64.1",
+        "@opentelemetry/exporter-trace-otlp-http": "^0.205.0",
+        "@opentelemetry/resources": "1.25.1",
+        "@opentelemetry/sdk-node": "^0.205.0",
+        "@opentelemetry/sdk-trace-base": "^2.1.0",
+        "@opentelemetry/semantic-conventions": "^1.37.0",
+        "axios": "^1.12.2",
+        "express": "^5.1.0",
+        "pg": "^8.16.3"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.3",
+        "@types/node": "^24.5.2",
+        "@types/pg": "^8.15.5",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.9.2"
+    }
+}
