@@ -16,7 +16,7 @@ services:
         command: ["-config.file=/etc/tempo-config.yaml"]
         volumes:
             - ./tempo-config.yaml:/etc/tempo-config.yaml
-            - /c/docker/projects/example-express-otel/tempo/data:/tmp/tempo
+            - ./docker-data/tempo/data:/tmp/tempo
 
     grafana:
         image: grafana/grafana:12.1
@@ -49,7 +49,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - /c/docker/projects/example-express-otel/postgres:/var/lib/postgresql/data
+            - ./docker-data/postgres:/var/lib/postgresql/data
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - ./init-grafana.sql:/docker-entrypoint-initdb.d/init-grafana.sql
         healthcheck:
