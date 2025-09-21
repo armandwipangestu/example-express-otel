@@ -1,6 +1,19 @@
-# Example Express OTEL
+<h1 align="center">Example Express OTEL</h1>
 
-A sample Node.js Express application instrumented with `OpenTelemetry`, integrated with `Language SDK`, `Grafana Tempo`, `Grafana`, and `PostgreSQL`, running with Docker Compose.
+<div align="center">
+
+![Express](https://img.shields.io/badge/-Express-181818?logo=express)&nbsp;
+![TypeScript](https://img.shields.io/badge/-TypeScript-FAF9F8?logo=typescript)&nbsp;
+![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-212121?logo=postgresql)&nbsp;
+![Open Telemetry](https://img.shields.io/badge/-Open%20Telemetry-4F62AD?logo=opentelemetry)&nbsp;
+![Grafana Dashboard](https://img.shields.io/badge/-Grafana%20Dashboard-0B0B0B?logo=grafana)&nbsp;
+![Grafana Tempo](https://img.shields.io/badge/-Grafana%20Tempo-0B0B0B?logo=grafana)&nbsp;
+![Docker](https://img.shields.io/badge/-Docker-F9FAFC?logo=docker)&nbsp;
+![Bruno](https://img.shields.io/badge/-Bruno-1D1D1D?logo=bruno)&nbsp;
+
+</div>
+
+<p align="center">A sample Node.js Express application instrumented with <code>OpenTelemetry</code>, integrated with <code>Language SDK</code>, <code>Grafana Tempo</code>, <code>Grafana</code>, and <code>PostgreSQL</code>, running with Docker Compose.</p>
 
 ---
 
@@ -11,10 +24,7 @@ A sample Node.js Express application instrumented with `OpenTelemetry`, integrat
 -   [Project Structure](#project-structure)
 -   [Docker Setup](#docker-setup)
 -   [Running the Application](#running-the-application)
--   [OTEL & Tempo](#otel--tempo)
--   [Grafana](#grafana)
--   [Development](#development)
--   [Troubleshooting](#troubleshooting)
+-   [Open Telemetry Integration](#open-telemetry-integration)
 
 ---
 
@@ -64,41 +74,41 @@ A sample Node.js Express application instrumented with `OpenTelemetry`, integrat
 
 ## Docker Setup
 
-### Start Container
+### Running the Application
+
+1. Clone this repository
+
+```bash
+git clone https://github.com/armandwipangestu/example-express-otel
+cd example-express-otel
+```
+
+2. Run the application using docker compose
 
 ```bash
 docker compose up -d
 ```
 
-### Running the Application
+3. Setup Grafana
 
-After docker compose up, the app is accessible at:
+-   Login to Grafana dashboard at `http://localhost:3001`, and login using default user pass `admin`:`admin`
+-   Add data source tempo with URL `http://tempo:3200`
 
-```bash
-http://localhost:3000
-```
+4. Trying to monitor trace
 
-Example endpoint:
+-   Try to access the endpoint express with URL `http://localhost:3000/items` or you can create item using HTTP POST method (see the bruno example)
+-   See the log, the request will have the `Trace ID`, example
 
-```bash
-POST /items
-GET /items
-```
+Example log:
+
+![Trace ID](./assets/trace-id.png)
+
+-   Now access the grafana dashboard and access the `Explore` menu then try to enter the Trace ID
+
+![Trace ID Query](./assets/trace-id-query.png)
 
 ## Open Telemetry Integration
 
+Open Telemetry can export data `trace`, `log`, and `metric`, then can be integrated to backend server like `Grafana Tempo`, `Loki`, `Prometheus` or `Grafana Mimir`. To visualize the data can using `Grafana Dashboard`.
+
 ![OTel Integration](./assets/otel-integration.png)
-
-## Screenshot
-
-1. Grafana Dashboard
-
-![Screenshot 1](./assets/screenshot-1.png)
-
-2. Docker Desktop Log
-
-![Screenshot 2](./assets/screenshot-2.png)
-
-3. Grafana Dashboard + Bruno
-
-![Screenshot 3](./assets/screenshot-3.png)
